@@ -31,9 +31,7 @@
       maxZoom: 19,
     }).addTo(map);
 
-    var fieldGeoJSON = <%= raw @geojson.to_json %>;
-    var geoLayer = L.geoJSON(fieldGeoJSON).addTo(map);
-
+    var geoLayer = L.geoJSON(<%= raw @geojson.to_json %>).addTo(map);
     map.fitBounds(geoLayer.getBounds());
   });
 </script>

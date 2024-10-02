@@ -6,14 +6,16 @@ class FieldsController < ApplicationController
   end
 
   def show
-    @geojson = RGeo::GeoJSON.encode(@field.shape)
+    @geojson = @field.shape_as_geojson
   end
 
   def new
     @field = Field.new
   end
 
-  def edit;end
+  def edit
+    @geojson = @field.shape_as_geojson
+  end
 
   def create
     @field = Field.new(field_params)
@@ -32,8 +34,11 @@ class FieldsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /fields/1 or /fields/1.json
   def update
+    shape_geojson = params[:field][:shape]
+    parsed_geojson = RGeo::GeoJSON.decode(shape_geojson, json_parser: :json)
+    @field.shape = parsed_geojson
+
     respond_to do |format|
       if @field.update(field_params)
         format.html { redirect_to @field, notice: "Field was successfully updated." }
