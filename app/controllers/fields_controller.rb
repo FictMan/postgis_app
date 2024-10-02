@@ -3,6 +3,7 @@ class FieldsController < ApplicationController
 
   def index
     @fields = Field.all
+    @geojsons = @fields.map(&:shape_as_geojson)
   end
 
   def show
