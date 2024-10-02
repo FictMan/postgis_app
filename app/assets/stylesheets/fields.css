@@ -50,3 +50,61 @@
 .btn-create:hover {
   background-color: #218838;
 }
+
+.field-details-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.field-details {
+  margin-bottom: 15px;
+}
+
+.field-details strong {
+  font-weight: bold;
+  color: #333;
+}
+
+.map-container {
+  height: 300px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.form-actions {
+  margin-top: 20px;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+
+.form-actions .btn-edit, .form-actions .btn-back, .form-actions .btn-destroy {
+  padding: 8px 12px;
+  border: none;
+  text-decoration: none;
+  border-radius: 4px;
+  color: white;
+  background-color: #007bff;
+  transition: background-color 0.3s;
+}
+
+.form-actions .btn-edit:hover {
+  background-color: #0056b3;
+}
+
+.form-actions .btn-back {
+  background-color: #6c757d;
+}
+
+.form-actions .btn-destroy {
+  background-color: #e30000;
+}
+
+.form-actions .btn-back:hover {
+  background-color: #5a6268;
+}

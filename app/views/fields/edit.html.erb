@@ -1,37 +1,39 @@
-<h1>Editing field</h1>
+<h1>Edit Field</h1>
 
-<%= form_with(model: @field) do |form| %>
-  <% if @field.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(field.errors.count, "error") %> prohibited this field from being saved:</h2>
+<div class="field-edit-container">
+  <%= form_with(model: @field) do |form| %>
+    <% if @field.errors.any? %>
+      <div style="color: red">
+        <h2><%= pluralize(field.errors.count, "error") %> prohibited this field from being saved:</h2>
 
-      <ul>
-        <% @field.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+        <ul>
+          <% @field.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= form.label :name, "Field Name" %>
+      <%= form.text_field :name, class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :area, "Area (sq meters)" %>
+      <%= form.number_field :area, step: 0.01, class: "form-control" %>
+    </div>
+
+    <div class="form-group">
+      <strong>Geometry (Shape):</strong>
+      <div id="map" class="map-container"></div> <!-- Map for editing the geometry -->
+    </div>
+
+    <div class="form-actions">
+      <%= form.submit "Save Changes", class: "btn-save" %>
+      <%= link_to 'Cancel', field_path(@field), class: "btn-cancel" %>
     </div>
   <% end %>
-
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :shape %>
-    <%= form.hidden_field :shape, id: 'shape-input' %>
-  </div>
-
-  <div id="map" style="height: 400px; width: 100%;"></div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
-
-<div>
-  <%= link_to "Back to fields", fields_path %>
 </div>
 
 <script>

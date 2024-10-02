@@ -1,9 +1,27 @@
 <p style="color: green"><%= notice %></p>
 
-<h1><%= @field.name %></h1>
-<p>Area: <%= @field.area %> square meters</p>
+<h1>Field Details</h1>
 
-<div id="map" style="height: 400px; width: 100%;"></div>
+<div class="field-details-container">
+  <div class="field-details">
+    <strong>Field Name:</strong> <%= @field.name %>
+  </div>
+
+  <div class="field-details">
+    <strong>Area (sq meters):</strong> <%= @field.area %>
+  </div>
+
+  <div class="field-details">
+    <strong>Geometry (Shape):</strong>
+    <div id="map" class="map-container"></div>
+  </div>
+
+  <div class="form-actions">
+    <%= link_to 'Edit', edit_field_path(@field), class: "btn-edit" %> |
+    <%= link_to 'Back', fields_path, class: "btn-back" %>
+    <%= button_to "Destroy this field", @field, method: :delete, class: "btn-destroy mt-2"  %>
+  </div>
+</div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -19,10 +37,3 @@
     map.fitBounds(geoLayer.getBounds());
   });
 </script>
-
-<div>
-  <%= link_to "Edit this field", edit_field_path(@field) %> |
-  <%= link_to "Back to fields", fields_path %>
-
-  <%= button_to "Destroy this field", @field, method: :delete %>
-</div>
