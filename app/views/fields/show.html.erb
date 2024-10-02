@@ -1,0 +1,28 @@
+<p style="color: green"><%= notice %></p>
+
+<h1><%= @field.name %></h1>
+<p>Area: <%= @field.area %> square meters</p>
+
+<div id="map" style="height: 400px; width: 100%;"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var map = L.map('map').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    var fieldGeoJSON = <%= raw @geojson.to_json %>;
+    var geoLayer = L.geoJSON(fieldGeoJSON).addTo(map);
+
+    map.fitBounds(geoLayer.getBounds());
+  });
+</script>
+
+<div>
+  <%= link_to "Edit this field", edit_field_path(@field) %> |
+  <%= link_to "Back to fields", fields_path %>
+
+  <%= button_to "Destroy this field", @field, method: :delete %>
+</div>

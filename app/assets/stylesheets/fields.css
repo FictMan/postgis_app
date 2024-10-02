@@ -1,0 +1,52 @@
+.fields-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.fields-table th, .fields-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.fields-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.fields-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.fields-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.btn-show, .btn-edit, .btn-delete, .btn-create {
+  padding: 5px 10px;
+  text-decoration: none;
+  border-radius: 3px;
+  color: white;
+  background-color: #007bff;
+}
+
+.btn-edit {
+  background-color: #28a745;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+}
+
+.btn-create {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 3px;
+}
+
+.btn-create:hover {
+  background-color: #218838;
+}

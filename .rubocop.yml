@@ -1,0 +1,37 @@
+require:
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  SuggestExtensions: false
+  NewCops: disable
+  Exclude:
+    - 'vendor/**/*'
+    - 'cache/**/*'
+    - 'db/*'
+    - 'bin/*'
+    - 'log/**/*'
+
+Style/ClassAndModuleChildren:
+  Enabled: true
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - db/**/*
+Layout/LineLength:
+  Max: 120
+Documentation:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+RSpec/AnyInstance:
+  Enabled: false
+RSpec/EmptyExampleGroup:
+  Enabled: false
+RSpec/ScatteredSetup:
+  Enabled: false
+RSpec/ContextWording:
+  Enabled: false
+RSpec/LetSetup:
+  Enabled: false
+RSpec/NestedGroups:
+  Max: 4

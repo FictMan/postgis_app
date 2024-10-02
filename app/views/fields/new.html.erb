@@ -1,0 +1,74 @@
+<h1>New field</h1>
+
+<%= form_with(model: @field) do |form| %>
+  <% if @field.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(field.errors.count, "error") %> prohibited this field from being saved:</h2>
+
+      <ul>
+        <% @field.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :shape %>
+    <%= form.hidden_field :shape, id: 'shape-input' %>
+  </div>
+
+  <div id="map" style="height: 400px; width: 100%;"></div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<div>
+  <%= link_to "Back to fields", fields_path %>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var map = L.map('map').setView([49.520942, 31.811126], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    var drawControl = new L.Control.Draw({
+      draw: {
+        polygon: true,
+        marker: false,
+        polyline: false,
+        rectangle: false,
+        circle: false
+      },
+      edit: {
+        featureGroup: drawnItems
+      }
+    });
+    map.addControl(drawControl);
+
+    map.on('draw:created', function (e) {
+      var type = e.layerType,
+          layer = e.layer;
+
+      drawnItems.clearLayers();
+      drawnItems.addLayer(layer);
+      var geojson = layer.toGeoJSON();
+      var geojsonString = JSON.stringify(geojson);
+
+      document.getElementById('shape-input').value = geojsonString;
+    });
+  });
+</script>
