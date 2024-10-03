@@ -7,11 +7,12 @@ module FieldParams
 
   def shape_attr
     shape_geojson = params[:field][:shape]
+    factory = RGeo::Geographic.spherical_factory(srid: 4326)
     if is_wkt?(shape_geojson)
-      factory = RGeo::Geographic.spherical_factory(srid: 4326)
       factory.parse_wkt(shape_geojson)
     elsif is_geojson?(shape_geojson)
-      RGeo::GeoJSON.decode(shape_geojson, json_parser: :json)
+      geo_params = RGeo::GeoJSON.decode(shape_geojson, json_parser: :json)
+      factory.multi_polygon([geo_params])
     end
   end
 

@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgis_app_db
+    image: postgis/postgis:13-3.1
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - .psqlrc:/root/.psqlrc:ro
+      - history:/user/local/hist
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: ./api/tmp/db
+      PSQL_HISTFILE: /user/local/hist/.psql_history
+      IRB_HISTFILE: /usr/local/hist/.irb_history
+    logging:
+      driver: none
+    healthcheck:
+      test: pg_isready -U postgres -h 127.0.0.1
+      interval: 5s
+
+  rails:
+    container_name: postgis_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      RAILS_ENV: development
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: password
+      IRB_HISTFILE: /usr/local/hist/.irb_history
+    depends_on:
+      - postgres
+    volumes:
+      - .:/rails
+      - rails_cache:/rails/tmp/cache
+      - bundle:/usr/local/bundle
+      - history:/usr/local/hist
+      - .psqlrc:/root/.psqlrc:ro
+    ports:
+      - 3000:3000
+
+volumes:
+  postgres:
+  bundle:
+  rails_cache:
+  history:

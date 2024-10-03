@@ -1,5 +1,5 @@
 class Field < ApplicationRecord
-  before_save :calculate_area
+  after_save :calculate_area
 
   def shape_as_geojson
     RGeo::GeoJSON.encode(shape)
