@@ -8,6 +8,6 @@ class Field < ApplicationRecord
   private
 
   def calculate_area
-    self.area = shape.geometry.area
+    # self.area = shape.geometry.area
   end
 end

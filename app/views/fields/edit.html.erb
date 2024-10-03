@@ -1,10 +1,10 @@
 <h1>Edit Field</h1>
 
-<div class="field-edit-container">
-  <%= form_with(model: @field) do |form| %>
+<div class="field-container">
+  <%= form_with(model: @field, id: "edit-feature-form") do |form| %>
     <% if @field.errors.any? %>
       <div style="color: red">
-        <h2><%= pluralize(field.errors.count, "error") %> prohibited this field from being saved:</h2>
+        <h2><%= pluralize(@field.errors.count, "error") %> prohibited this field from being saved:</h2>
 
         <ul>
           <% @field.errors.each do |error| %>
@@ -21,12 +21,13 @@
 
     <div class="form-group">
       <%= form.label :area, "Area (sq meters)" %>
-      <%= form.number_field :area, step: 0.01, class: "form-control" %>
+      <%= form.number_field :area, step: 0.01, class: "form-control", readonly: true, id: "field_area" %>
     </div>
 
     <div class="form-group">
       <strong>Geometry (Shape):</strong>
-      <div id="map" class="map-container"></div> <!-- Map for editing the geometry -->
+      <div id="map" class="map-container" style="height: 400px;"></div>
+      <%= form.hidden_field :shape %>
     </div>
 
     <div class="form-actions">
@@ -38,39 +39,57 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    var map = L.map('map').setView([49.520942, 31.811126], 13);
+    function fixCoordinateOrder(coordinates) {
+      return coordinates.map(function (polygon) {
+        return polygon.map(function (ring) {
+          return ring.map(function (coord) {
+            return [coord[1], coord[0]];
+          });
+        });
+      });
+    }
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-    }).addTo(map);
-
-    var drawnItems = new L.FeatureGroup();
-    map.addLayer(drawnItems);
-
-    var drawControl = new L.Control.Draw({
-      draw: {
-        polygon: true,
-        marker: false,
-        polyline: false,
-        rectangle: false,
-        circle: false
-      },
-      edit: {
-        featureGroup: drawnItems
+    var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osm = L.tileLayer(osmUrl, { maxZoom: 18 });
+    var map = new L.Map('map', { center: new L.LatLng(49.520942, 31.811126), zoom: 13 }); 
+    var drawnItems = L.featureGroup().addTo(map);
+    var geoLayer = L.geoJSON(<%= raw @geojson.to_json %>, {
+      onEachFeature: function (feature, layer) {
+        if (feature.type === 'MultiPolygon') {
+          var coordinates = fixCoordinateOrder(feature.coordinates)
+          coordinates.forEach(function (polygonCoords) {
+            var polygon = L.polygon(polygonCoords);
+            drawnItems.addLayer(polygon);
+          });
+        } else {
+          drawnItems.addLayer(layer);
+        }
       }
     });
-    map.addControl(drawControl);
+    L.control.layers({
+      'osm': osm.addTo(map),
+      "google": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', { attribution: 'google' })
+    }, { drawlayer: drawnItems }, { position: 'topleft', collapsed: false }).addTo(map);
+    map.fitBounds(geoLayer.getBounds());
 
-    map.on('draw:created', function (e) {
-      var type = e.layerType,
-          layer = e.layer;
+    map.addControl(new L.Control.Draw({
+      draw: false,
+      edit: {
+        featureGroup: drawnItems,
+        remove: true
+      }
+    }));
 
-      drawnItems.clearLayers();
-      drawnItems.addLayer(layer);
+    function saveShapeAndArea(layer) {
       var geojson = layer.toGeoJSON();
       var geojsonString = JSON.stringify(geojson);
+      document.getElementById('field_shape').value = geojsonString;
+    }
 
-      document.getElementById('shape-input').value = geojsonString;
+    map.on(L.Draw.Event.EDITED, function(event) {
+      event.layers.eachLayer(function(layer) {
+        saveShapeAndArea(layer);
+      });
     });
   });
 </script>

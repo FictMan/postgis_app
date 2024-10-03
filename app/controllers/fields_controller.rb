@@ -1,5 +1,7 @@
 class FieldsController < ApplicationController
-  before_action :set_field, only: %i[show edit update destroy ]
+  include FieldParams
+
+  before_action :set_field, only: %i[show edit update destroy]
 
   def index
     @fields = Field.all
@@ -20,35 +22,18 @@ class FieldsController < ApplicationController
 
   def create
     @field = Field.new(field_params)
-    shape_geojson = params[:field][:shape]
-    parsed_geojson = RGeo::GeoJSON.decode(shape_geojson, json_parser: :json)
-    @field.shape = parsed_geojson
+    @field.shape = shape_attr
+    return default_response(@field, :created, :show) if @field.save
 
-    respond_to do |format|
-      if @field.save
-        format.html { redirect_to @field, notice: "Field was successfully created." }
-        format.json { render :show, status: :created, location: @field }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @field.errors, status: :unprocessable_entity }
-      end
-    end
+    default_response(@field, :unprocessable_entity, :new)
   end
 
-  def update
-    shape_geojson = params[:field][:shape]
-    parsed_geojson = RGeo::GeoJSON.decode(shape_geojson, json_parser: :json)
-    @field.shape = parsed_geojson
+  def update    
+    @field.name = field_params[:name]
+    @field.shape = shape_attr
+    return default_response(@field, :ok, :show) if @field.save
 
-    respond_to do |format|
-      if @field.update(field_params)
-        format.html { redirect_to @field, notice: "Field was successfully updated." }
-        format.json { render :show, status: :ok, location: @field }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @field.errors, status: :unprocessable_entity }
-      end
-    end
+    default_response(@field, :unprocessable_entity, :edit)
   end
 
   def destroy
@@ -61,11 +46,8 @@ class FieldsController < ApplicationController
   end
 
   private
-    def set_field
-      @field = Field.find(params[:id])
-    end
 
-    def field_params
-      params.require(:field).permit(:name, :shape)
-    end
+  def set_field
+    @field = Field.find(params[:id])
+  end
 end
