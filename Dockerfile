@@ -4,7 +4,7 @@ FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config libproj-dev proj-bin
 
 # Upgrade RubyGems and install latest Bundler
 RUN gem update --system && \

@@ -23,7 +23,6 @@ group :development, :test do
   gem 'pry'
   gem 'pry-doc'
   gem 'rspec-rails'
-  gem 'rswag-specs'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
 end
