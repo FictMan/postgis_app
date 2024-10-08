@@ -1,0 +1,47 @@
+version: '8.0'
+
+environment:
+  RAILS_ENV: development
+
+compose:
+  files:
+    - .docker-compose.yml
+  project_name: optiline-app
+
+interaction:
+  bash:
+    description: Run an arbitrary script within a container (or open a shell without deps)
+    service: rails
+    command: /bin/bash
+    compose_run_options: [no-deps]
+
+  bundle:
+    description: Run Bundler commands
+    service: rails
+    command: bundle
+    compose_run_options: [no-deps]
+  
+  rails:
+    description: Run Rails commands
+    service: rails
+    command: bundle exec rails
+    subcommands:
+      s:
+        description: Run Rails server at http://localhost:3000
+        service: rails
+        compose:
+          run_options: [service-ports, use-aliases]
+
+  psql:
+    description: Run Postgres psql console
+    service: postgres
+    command: psql -h postgres -U postgres
+
+provision:
+  - '[[ "$RESET_DOCKER" == "true" ]] && echo "Re-creating the Docker env from scratch..." && dip compose down --volumes || echo "Re-provisioning the Docker env..."'
+  - dip compose up -d postgres
+  - dip compose build
+  - dip bundle install
+  - dip rails db:create
+  - dip rails db:migrate
+  - echo "🚀 Ready to rock! Run 'dip rails s' to start a Rails"
